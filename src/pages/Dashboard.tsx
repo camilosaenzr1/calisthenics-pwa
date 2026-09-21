@@ -1,59 +1,49 @@
-import React from 'react'
 import { useUser } from '../store/UserContext'
-import { Play, Flame, Calendar } from 'lucide-react'
+import { Play } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export default function Dashboard() {
   const { currentUser } = useUser()
 
-  if (!currentUser) return <div className="p-4">Cargando...</div>
+  if (!currentUser) return null
 
   return (
-    <div className="p-4 space-y-6">
-      <header className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Hola, {currentUser.name}</h1>
-          <p className="text-neutral-400">Listo para entrenar?</p>
-        </div>
-        <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-primary font-bold">
-          {currentUser.name.charAt(0)}
-        </div>
+    <div className="p-6 space-y-8">
+      <header className="pt-8">
+        <p className="text-text-muted font-medium mb-1">DOMINGO 21 SEP</p>
+        <h1 className="title-large text-white">Hola, {currentUser.name}</h1>
       </header>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-surface p-4 rounded-2xl flex flex-col items-center justify-center">
-          <Flame className="text-orange-500 mb-2" size={28} />
-          <span className="text-2xl font-bold">3 Días</span>
-          <span className="text-xs text-neutral-400">Racha actual</span>
-        </div>
-        <div className="bg-surface p-4 rounded-2xl flex flex-col items-center justify-center">
-          <Calendar className="text-primary mb-2" size={28} />
-          <span className="text-2xl font-bold">12</span>
-          <span className="text-xs text-neutral-400">Entrenos mes</span>
-        </div>
-      </div>
-
-      {/* Quick Action */}
-      <div className="bg-primary/10 border border-primary/20 p-5 rounded-2xl mt-6">
-        <h2 className="text-lg font-bold text-primary mb-1">Entrenamiento de Hoy</h2>
-        <p className="text-sm text-neutral-300 mb-4">Fase 1: Movilidad y Fuerza Base</p>
+      {/* Hero Action Card */}
+      <Link to="/workout" className="block relative w-full h-80 rounded-[32px] overflow-hidden group">
+        <img 
+          src="/exercises/incline_pushup.jpg" 
+          alt="Workout" 
+          className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         
-        <Link to="/workout" className="w-full bg-primary text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-blue-600 transition-colors">
-          <Play fill="currentColor" size={20} />
-          Comenzar
-        </Link>
-      </div>
-
-      {/* Nutrition Summary Preview */}
-      <div className="bg-surface p-5 rounded-2xl">
-        <h2 className="font-bold text-white mb-3">Resumen Nutricional</h2>
-        <div className="w-full bg-neutral-800 rounded-full h-2 mb-2">
-          <div className="bg-green-500 h-2 rounded-full" style={{ width: '45%' }}></div>
+        <div className="absolute bottom-0 left-0 w-full p-6 flex flex-col justify-end">
+          <span className="bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full w-max mb-3 uppercase tracking-widest">
+            Nivel 1
+          </span>
+          <h2 className="text-3xl font-bold text-white leading-tight mb-4">Cuerpo<br/>Completo</h2>
+          
+          <div className="w-full bg-white text-black py-4 rounded-full font-bold flex justify-center items-center gap-2">
+            <Play fill="currentColor" size={20} />
+            Empezar Rutina
+          </div>
         </div>
-        <div className="flex justify-between text-xs text-neutral-400">
-          <span>Consumido: 950 kcal</span>
-          <span>Meta: 2100 kcal</span>
+      </Link>
+
+      <div className="flex gap-4">
+        <div className="glass-panel p-5 flex-1">
+          <div className="text-text-muted text-sm font-medium mb-1">Racha</div>
+          <div className="text-2xl font-bold">3 Días</div>
+        </div>
+        <div className="glass-panel p-5 flex-1">
+          <div className="text-text-muted text-sm font-medium mb-1">Calorías</div>
+          <div className="text-2xl font-bold">450 <span className="text-sm font-normal text-text-muted">/ 1900</span></div>
         </div>
       </div>
     </div>

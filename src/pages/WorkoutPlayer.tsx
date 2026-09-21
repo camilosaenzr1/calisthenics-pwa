@@ -1,112 +1,118 @@
-import React, { useState, useEffect } from 'react'
-import { db, Exercise } from '../db/db'
-import { Timer, CheckCircle, Info } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { db, type Exercise } from '../db/db'
+import { Check } from 'lucide-react'
 
 export default function WorkoutPlayer() {
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentSet, setCurrentSet] = useState(1)
+  const totalSets = 3 // Hardcoded to 3 sets as per plan
+  
   const [timeLeft, setTimeLeft] = useState(0)
-  const [isActive, setIsActive] = useState(false)
+  const [isResting, setIsResting] = useState(false)
 
   useEffect(() => {
-    // Cargar solo los nivel 1 y 2
     db.exercises.toArray().then(data => setExercises(data))
   }, [])
 
   useEffect(() => {
     let interval: any = null
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(timeLeft => timeLeft - 1)
-      }, 1000)
-    } else if (timeLeft === 0) {
-      setIsActive(false)
+    if (isResting && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft(t => t - 1), 1000)
+    } else if (timeLeft === 0 && isResting) {
+      setIsResting(false)
       clearInterval(interval)
     }
     return () => clearInterval(interval)
-  }, [isActive, timeLeft])
+  }, [isResting, timeLeft])
 
-  if (exercises.length === 0) return <div className="p-4">Cargando rutina...</div>
+  if (exercises.length === 0) return null
 
   const currentEx = exercises[currentIndex]
 
-  const startRest = () => {
-    setTimeLeft(90) // 90 segundos de descanso por defecto
-    setIsActive(true)
-  }
-
-  const nextExercise = () => {
-    if (currentIndex < exercises.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-      setTimeLeft(0)
-      setIsActive(false)
+  const handleCompleteSet = () => {
+    if (currentSet < totalSets) {
+      setCurrentSet(currentSet + 1)
+      setTimeLeft(90) // 90s rest
+      setIsResting(true)
+    } else {
+      // Move to next exercise
+      if (currentIndex < exercises.length - 1) {
+        setCurrentIndex(currentIndex + 1)
+        setCurrentSet(1)
+        setTimeLeft(120) // longer rest between exercises
+        setIsResting(true)
+      } else {
+        alert("¡Entrenamiento Completado!")
+      }
     }
   }
 
-  return (
-    <div className="flex flex-col h-full min-h-[100vh] bg-background">
-      <div className="glass-panel rounded-b-[2.5rem] p-6 pt-10 shadow-lg">
-        <div className="flex justify-between items-center mb-4">
-          <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider glow-border">
-            {currentEx.pattern}
-          </span>
-          <span className="text-sm font-medium text-neutral-400">
-            Nivel {currentEx.level}
-          </span>
-        </div>
-        
-        <h1 className="text-3xl font-bold text-white leading-tight mb-4">{currentEx.name}</h1>
-        
-        {/* Dynamic Image from AI generation */}
-        {currentEx.media_url ? (
-          <div className="w-full h-56 rounded-2xl my-6 overflow-hidden border border-neutral-800 relative glow-border">
-            <img 
-              src={currentEx.media_url} 
-              alt={currentEx.name} 
-              className="w-full h-full object-cover"
-            />
-            {/* Soft gradient overlay at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-surface to-transparent opacity-80" />
-          </div>
-        ) : (
-          <div className="w-full h-48 bg-surface rounded-2xl my-6 flex items-center justify-center border border-neutral-800">
-            <Info className="text-neutral-500 mr-2" />
-            <span className="text-neutral-500">Animación del ejercicio</span>
-          </div>
-        )}
+  const skipRest = () => {
+    setTimeLeft(0)
+    setIsResting(false)
+  }
 
-        <p className="text-neutral-300 text-sm leading-relaxed mb-2">{currentEx.description}</p>
-        <div className="inline-flex items-center mt-2 px-3 py-1.5 bg-neutral-900 rounded-lg border border-neutral-800">
-          <span className="text-xs font-semibold text-primary glow-text">Meta: {currentEx.next_level_criteria}</span>
+  return (
+    <div className="flex flex-col h-screen bg-background">
+      {/* Full screen image header */}
+      <div className="relative h-[55vh] w-full">
+        {currentEx.media_url ? (
+          <img src={currentEx.media_url} alt={currentEx.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full bg-surface" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        
+        {/* Top bar info */}
+        <div className="absolute top-12 left-6 right-6 flex justify-between">
+          <span className="glass-panel px-4 py-1.5 text-xs font-bold tracking-widest uppercase">
+            Ejercicio {currentIndex + 1} de {exercises.length}
+          </span>
+          <span className="glass-panel px-4 py-1.5 text-xs font-bold text-primary">
+            Serie {currentSet} / {totalSets}
+          </span>
         </div>
       </div>
 
-      <div className="flex-1 p-6 flex flex-col justify-end gap-4 pb-24">
-        {/* Timer Section */}
-        {isActive ? (
-          <div className="glass-panel rounded-3xl p-8 flex flex-col items-center">
-            <span className="text-primary font-medium text-sm mb-2 glow-text">Descanso Activo</span>
-            <span className="text-6xl font-mono font-bold text-white glow-text">
-              {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-            </span>
+      {/* Content */}
+      <div className="flex-1 px-6 pb-24 -mt-10 relative z-10 flex flex-col">
+        <h1 className="title-large text-white mb-2">{currentEx.name}</h1>
+        <p className="text-text-muted text-lg">{currentEx.description}</p>
+        
+        <div className="mt-8 flex justify-between items-center glass-panel p-6">
+          <div>
+            <div className="text-sm text-text-muted mb-1">Objetivo</div>
+            <div className="text-3xl font-bold text-white">{currentEx.next_level_criteria}</div>
           </div>
-        ) : (
-          <button 
-            onClick={startRest}
-            className="w-full py-4 rounded-2xl bg-surface hover:bg-neutral-800 text-white font-bold flex justify-center items-center gap-2 border border-neutral-700 transition-colors"
-          >
-            <Timer size={22} className="text-primary" />
-            Iniciar Descanso (90s)
-          </button>
-        )}
+          <div className="h-12 w-px bg-neutral-800" />
+          <div className="text-right">
+            <div className="text-sm text-text-muted mb-1">Descanso</div>
+            <div className="text-3xl font-bold text-white">90s</div>
+          </div>
+        </div>
 
-        <button 
-          onClick={nextExercise}
-          className="w-full py-4 rounded-2xl bg-primary hover:bg-emerald-400 text-black font-extrabold flex justify-center items-center gap-2 glow-border transition-all transform active:scale-95"
-        >
-          <CheckCircle size={22} />
-          {currentIndex === exercises.length - 1 ? 'Finalizar Rutina' : 'Completado - Siguiente'}
-        </button>
+        {/* Floating Action Button area */}
+        <div className="mt-auto pt-6">
+          {isResting ? (
+            <div className="flex flex-col items-center">
+              <div className="text-7xl font-bold text-white mb-6 tabular-nums">
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </div>
+              <button onClick={skipRest} className="text-text-muted font-medium py-3 px-8 rounded-full border border-neutral-700">
+                Saltar Descanso
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={handleCompleteSet}
+              className="w-full bg-white text-black text-xl font-bold py-5 rounded-[24px] flex justify-center items-center gap-3 transition-transform active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.2)]"
+            >
+              <Check size={28} />
+              Completar Serie {currentSet}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )

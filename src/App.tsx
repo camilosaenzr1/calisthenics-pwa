@@ -19,7 +19,7 @@ const BottomNav = () => {
   ]
 
   return (
-    <nav className="fixed bottom-0 w-full bg-surface border-t border-neutral-800 flex justify-around p-3 pb-safe z-50">
+    <nav className="fixed bottom-0 w-full bg-black/80 backdrop-blur-xl border-t border-white/10 flex justify-around p-2 pb-safe z-50">
       {navItems.map((item) => {
         const isActive = location.pathname === item.path
         return (
