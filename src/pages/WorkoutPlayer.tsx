@@ -44,10 +44,10 @@ export default function WorkoutPlayer() {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-[80vh]">
-      <div className="bg-surface rounded-b-3xl p-6 shadow-lg">
+    <div className="flex flex-col h-full min-h-[100vh] bg-background">
+      <div className="glass-panel rounded-b-[2.5rem] p-6 pt-10 shadow-lg">
         <div className="flex justify-between items-center mb-4">
-          <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+          <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider glow-border">
             {currentEx.pattern}
           </span>
           <span className="text-sm font-medium text-neutral-400">
@@ -55,43 +55,57 @@ export default function WorkoutPlayer() {
           </span>
         </div>
         
-        <h1 className="text-3xl font-bold text-white leading-tight mb-2">{currentEx.name}</h1>
+        <h1 className="text-3xl font-bold text-white leading-tight mb-4">{currentEx.name}</h1>
         
-        {/* Placeholder para GIF Lottie u Offline Image */}
-        <div className="w-full h-48 bg-neutral-800 rounded-xl my-6 flex items-center justify-center border border-neutral-700">
-          <Info className="text-neutral-500 mr-2" />
-          <span className="text-neutral-500">Animación del ejercicio</span>
-        </div>
+        {/* Dynamic Image from AI generation */}
+        {currentEx.media_url ? (
+          <div className="w-full h-56 rounded-2xl my-6 overflow-hidden border border-neutral-800 relative glow-border">
+            <img 
+              src={currentEx.media_url} 
+              alt={currentEx.name} 
+              className="w-full h-full object-cover"
+            />
+            {/* Soft gradient overlay at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-surface to-transparent opacity-80" />
+          </div>
+        ) : (
+          <div className="w-full h-48 bg-surface rounded-2xl my-6 flex items-center justify-center border border-neutral-800">
+            <Info className="text-neutral-500 mr-2" />
+            <span className="text-neutral-500">Animación del ejercicio</span>
+          </div>
+        )}
 
-        <p className="text-neutral-300 text-sm leading-relaxed">{currentEx.description}</p>
-        <p className="mt-3 text-xs font-semibold text-green-400">Objetivo para avanzar: {currentEx.next_level_criteria}</p>
+        <p className="text-neutral-300 text-sm leading-relaxed mb-2">{currentEx.description}</p>
+        <div className="inline-flex items-center mt-2 px-3 py-1.5 bg-neutral-900 rounded-lg border border-neutral-800">
+          <span className="text-xs font-semibold text-primary glow-text">Meta: {currentEx.next_level_criteria}</span>
+        </div>
       </div>
 
-      <div className="flex-1 p-6 flex flex-col justify-end gap-4">
+      <div className="flex-1 p-6 flex flex-col justify-end gap-4 pb-24">
         {/* Timer Section */}
         {isActive ? (
-          <div className="bg-surface rounded-2xl p-6 flex flex-col items-center">
-            <span className="text-neutral-400 text-sm mb-2">Descanso Activo</span>
-            <span className="text-5xl font-mono font-bold text-white">
+          <div className="glass-panel rounded-3xl p-8 flex flex-col items-center">
+            <span className="text-primary font-medium text-sm mb-2 glow-text">Descanso Activo</span>
+            <span className="text-6xl font-mono font-bold text-white glow-text">
               {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
             </span>
           </div>
         ) : (
           <button 
             onClick={startRest}
-            className="w-full py-4 rounded-xl bg-neutral-800 text-white font-bold flex justify-center items-center gap-2 border border-neutral-700"
+            className="w-full py-4 rounded-2xl bg-surface hover:bg-neutral-800 text-white font-bold flex justify-center items-center gap-2 border border-neutral-700 transition-colors"
           >
-            <Timer size={20} />
+            <Timer size={22} className="text-primary" />
             Iniciar Descanso (90s)
           </button>
         )}
 
         <button 
           onClick={nextExercise}
-          className="w-full py-4 rounded-xl bg-primary text-white font-bold flex justify-center items-center gap-2 shadow-lg shadow-primary/30"
+          className="w-full py-4 rounded-2xl bg-primary hover:bg-emerald-400 text-black font-extrabold flex justify-center items-center gap-2 glow-border transition-all transform active:scale-95"
         >
-          <CheckCircle size={20} />
-          Completado - Siguiente
+          <CheckCircle size={22} />
+          {currentIndex === exercises.length - 1 ? 'Finalizar Rutina' : 'Completado - Siguiente'}
         </button>
       </div>
     </div>

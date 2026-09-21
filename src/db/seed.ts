@@ -33,56 +33,64 @@ export async function seedDatabase() {
       pattern: 'Push Horizontal',
       level: 1,
       description: 'De pie, empujando la pared. 3x15 repeticiones fluidas.',
-      next_level_criteria: '3x15'
+      next_level_criteria: '3x15',
+      media_url: '/exercises/wall_pushup.jpg'
     },
     {
       name: 'Flexiones Inclinadas',
       pattern: 'Push Horizontal',
       level: 2,
       description: 'Manos apoyadas en mesa o silla estable. 3x12 repeticiones.',
-      next_level_criteria: '3x12'
+      next_level_criteria: '3x12',
+      media_url: '/exercises/incline_pushup.jpg'
     },
     {
       name: 'Remos de Puerta',
       pattern: 'Pull Horizontal',
       level: 1,
       description: 'Sosteniéndose del marco de una puerta, dejarse caer y traccionar.',
-      next_level_criteria: '3x15'
+      next_level_criteria: '3x15',
+      media_url: '/exercises/doorway_row.jpg'
     },
     {
       name: 'Remo Australiano Inclinado',
       pattern: 'Pull Horizontal',
       level: 2,
       description: 'Usando una mesa resistente o sábanas en la puerta.',
-      next_level_criteria: '3x10'
+      next_level_criteria: '3x10',
+      media_url: '/exercises/incline_row.jpg'
     },
     {
       name: 'Flexiones de Pica (Alta)',
       pattern: 'Push Vertical',
       level: 1,
       description: 'Flexión inclinada con cadera a 90 grados.',
-      next_level_criteria: '3x10'
+      next_level_criteria: '3x10',
+      media_url: '/exercises/pike_pushup.jpg'
     },
     {
       name: 'Deslizamientos de Pared',
       pattern: 'Pull Vertical',
       level: 1,
       description: 'Brazos en W subiendo a Y contra la pared.',
-      next_level_criteria: '3x12'
+      next_level_criteria: '3x12',
+      media_url: '/exercises/wall_slide.jpg'
     },
     {
       name: 'Sentadilla Asistida',
       pattern: 'Piernas',
       level: 1,
       description: 'Sosteniéndose del marco de la puerta.',
-      next_level_criteria: '3x15'
+      next_level_criteria: '3x15',
+      media_url: '/exercises/assisted_squat.jpg'
     },
     {
       name: 'Bicho Muerto (Dead Bug)',
       pattern: 'Core',
       level: 1,
       description: 'Acostado, extender brazo y pierna contraria.',
-      next_level_criteria: '3x16'
+      next_level_criteria: '3x16',
+      media_url: '/exercises/dead_bug.jpg'
     }
   ]);
 }
